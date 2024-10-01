@@ -31,7 +31,7 @@ class HomeRepository {
 
       return newsList;
     } catch (e) {
-      print(e);
+      // print(e);
       return NewsList(
         status: 'fail',
         totalResults: 0,
