@@ -30,6 +30,12 @@ class _HomePageState extends ConsumerState<HomePage> {
   }
 
   @override
+  void dispose() {
+    scrollController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -43,17 +49,15 @@ class _HomePageState extends ConsumerState<HomePage> {
                 final articles = ref.watch(homeControllerProvider);
 
                 return articles.when(
-                  error: (error, stackTrace) => Center(
+                  error: (error, stackTrace) => const Center(
                     child: Text('Error occured. Please try again'),
                   ),
-                  loading: () => const Expanded(
-                    child: Center(
-                      child: CircularProgressIndicator(),
-                    ),
+                  loading: () => const Center(
+                    child: CircularProgressIndicator(),
                   ),
                   data: (data) => data.isEmpty
-                      ? Center(
-                          child: const Text(
+                      ? const Center(
+                          child: Text(
                             "No news found",
                           ),
                         )
@@ -61,12 +65,9 @@ class _HomePageState extends ConsumerState<HomePage> {
                           child: CustomScrollView(
                             controller: scrollController,
                             slivers: [
-                              SliverToBoxAdapter(
-                                child: ListView.builder(
-                                  physics: const NeverScrollableScrollPhysics(),
-                                  shrinkWrap: true,
-                                  itemCount: data.length,
-                                  itemBuilder: (context, index) {
+                              SliverList(
+                                delegate: SliverChildBuilderDelegate(
+                                  (context, index) {
                                     return GestureDetector(
                                       onTap: () {
                                         Navigator.of(context).push(
@@ -101,6 +102,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                                       ),
                                     );
                                   },
+                                  childCount: data.length,
                                 ),
                               ),
                               SliverToBoxAdapter(
@@ -118,7 +120,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                                           data.isEmpty
                                       ? false
                                       : true,
-                                  child: const CircularProgressIndicator(),
+                                  child: CircularProgressIndicator(),
                                 ),
                               ),
                             ],
